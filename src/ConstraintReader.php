@@ -8,7 +8,7 @@ use Doctrine\Common\Annotations\DocParser;
 class ConstraintReader
 {
     const DEFAULT_NAMESPACE = 'Symfony\Component\Validator\Constraints';
-    const DEFAULT_PATH = '../../vendor/symfony/validator/Constraints/';
+    const DEFAULT_PATH = '../vendor/symfony/validator/Constraints/';
 
     /**
      * @var DocParser
@@ -23,14 +23,18 @@ class ConstraintReader
         AnnotationRegistry::registerLoader($this->getClassLoaderCallback());
     }
 
-    public function read(array &$lines)
+    public function read(array &$definitions)
     {
-        $annotations = [];
-        foreach ($lines as $line) {
-            $annotations += $this->parser->parse('@'.$line);
+        $constraints = [];
+
+        foreach ($definitions as $key => &$keyDefinitions) {
+            foreach ($keyDefinitions as $definition) {
+                $annotations = $this->parser->parse('@'.$definition);
+                $constraints[$key][] = $annotations[0];
+            }
         }
 
-        return $annotations;
+        return $constraints;
     }
 
     /**
