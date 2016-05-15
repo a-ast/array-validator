@@ -1,0 +1,27 @@
+{
+    "name": "aa/array-validator",
+    "type": "library",
+    "description": "Component for array validation",
+    "homepage": "https://github.com/AAstakhov/array-validator",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.5 || ^7.0",
+        "symfony/yaml": "2.* || 3.*",
+        "symfony/validator": "^3.0",
+        "doctrine/annotations": "^1.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "5.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Aa\\ArrayValidator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Aa\\ArrayValidator\\Tests\\": "tests/"
+        }
+    }
+}

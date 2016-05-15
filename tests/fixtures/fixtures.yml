@@ -1,0 +1,23 @@
+test_array_has_no_violoation:
+    array:
+        name: 'The Lord of the Rings'
+        price: '25.99 '
+        in_stock: true
+        isbns:
+            isbn-10: '1230260002385'
+        pages: 567
+
+    constrains:
+        name:
+            - 'NotBlank'
+            - 'Type(type="string", message="BullShit")'
+        price:
+            - 'NotBlank'
+            - 'Type(type="float", message="BullShit")'
+        in_stock:
+            - 'NotBlank'
+            - 'Type(type="bool", message="BullShit")'
+        isbns/isbn-10: 'Isbn'
+        pages: 'DateTime'
+
+    violations: []
