@@ -2,7 +2,6 @@
 
 namespace Aa\ArrayValidator;
 
-use Aa\ArrayValidator\Matcher\MatcherInterface;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -11,10 +10,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class Validator
 {
-    /**
-     * @var MatcherInterface
-     */
-    private $valueMatcher;
     /**
      * @var ValidatorInterface
      */
@@ -55,6 +50,13 @@ class Validator
 
             $keyPath->push($key);
 
+            if(is_array($item)) {
+                $this->internalValidate($item, $constraints, $keyPath, $violations);
+                
+                $keyPath->pop();
+                continue;
+            }
+
             if(!isset($constraints[$keyPath->getPathString()])) {
 
                 $violation = new ConstraintViolation('Unexpected array item', '', [], '', $keyPath->getPathString(), null);
@@ -64,14 +66,26 @@ class Validator
                 continue;
             }
 
-            if(is_array($item)) {
-                $this->internalValidate($item, $constraints, $keyPath, $violations);
-                
-                $keyPath->pop();
-                continue;
-            }
+            $keyConstraints = $constraints[$keyPath->getPathString()];
 
-            $violations->addAll($this->validator->validate($item, $constraints));
+            $originalViolations = $this->validator->validate($item, $keyConstraints);
+            /** @var ConstraintViolation $violation */
+            foreach ($originalViolations as $violation) {
+                $newViolation = new ConstraintViolation(
+                    $violation->getMessage(),
+                    $violation->getMessageTemplate(),
+                    $violation->getParameters(),
+                    $violation->getRoot(),
+                    $keyPath->getPathString(),
+                    $violation->getInvalidValue(),
+                    $violation->getPlural(),
+                    $violation->getCode(),
+                    $violation->getConstraint(),
+                    $violation->getCause()
+                );
+
+                $violations->add($newViolation);
+            }
 
             $keyPath->pop();
         }

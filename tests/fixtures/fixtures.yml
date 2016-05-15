@@ -4,20 +4,22 @@ test_array_has_no_violoation:
         price: '25.99 '
         in_stock: true
         isbns:
-            isbn-10: '1230260002385'
+            isbn-10: '9780007117116'
         pages: 567
 
     constrains:
         name:
             - 'NotBlank'
-            - 'Type(type="string", message="BullShit")'
+            - 'Type(type="string")'
         price:
             - 'NotBlank'
-            - 'Type(type="float", message="BullShit")'
+            - 'Type(type="float")'
         in_stock:
             - 'NotBlank'
-            - 'Type(type="bool", message="BullShit")'
-        isbns/isbn-10: 'Isbn'
-        pages: 'DateTime'
+            - 'Type(type="bool")'
+        isbns/isbn-10:
+            - 'Isbn'
+        pages:
+            - 'Type(type="integer")'
 
     violations: []
