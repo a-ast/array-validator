@@ -8,7 +8,6 @@ use Doctrine\Common\Annotations\DocParser;
 class ConstraintReader
 {
     const DEFAULT_NAMESPACE = 'Symfony\Component\Validator\Constraints';
-    const DEFAULT_PATH = '../vendor/symfony/validator/Constraints/';
 
     /**
      * @var DocParser
@@ -44,14 +43,13 @@ class ConstraintReader
     {
         return function ($className) {
 
-            $path = str_replace(self::DEFAULT_NAMESPACE.'\\', self::DEFAULT_PATH, $className).'.php';
-            if (is_file($path)) {
-                require $path;
+            try {
+                new \ReflectionClass($className);
 
                 return true;
+            } catch(\ReflectionException $exception) {
+                return false;
             }
-
-            return false;
         };
     }
 }
