@@ -5,6 +5,8 @@ namespace Aa\ArrayValidator\Tests;
 use Aa\ArrayValidator\ConstraintReader;
 use Aa\ArrayValidator\Validator;
 use PHPUnit_Framework_TestCase;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ValidatorTest extends PHPUnit_Framework_TestCase
 {
@@ -24,10 +26,28 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 
         $validator = new Validator();
         $violations = $validator->validate($array, $constraints);
+
+        $this->assertEquals($this->getViolationsAsArray($violations), $violationsData);
     }
 
     public function dataProvider()
     {
         return $this->getDataFromFixtureFile('fixtures');
+    }
+
+    private function getViolationsAsArray(ConstraintViolationListInterface $violations)
+    {
+        $result = [];
+
+        /** @var ConstraintViolationInterface $violation */
+        foreach ($violations as $violation) {
+            $result[] = [
+                'key_path' => $violation->getPropertyPath(),
+                'invalid_value' => $violation->getInvalidValue(),
+                'message' => $violation->getMessage(),
+            ];
+        }
+
+        return $result;
     }
 }

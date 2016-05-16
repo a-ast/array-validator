@@ -49,6 +49,7 @@ class Validator
         foreach ($array as $key => &$item) {
 
             $keyPath->push($key);
+            $pathString = $keyPath->getPathString();
 
             if(is_array($item)) {
                 $this->internalValidate($item, $constraints, $keyPath, $violations);
@@ -57,37 +58,52 @@ class Validator
                 continue;
             }
 
-            if(!isset($constraints[$keyPath->getPathString()])) {
 
-                $violation = new ConstraintViolation('Unexpected array item', '', [], '', $keyPath->getPathString(), null);
+            if(!isset($constraints[$pathString])) {
+
+                $violation = new ConstraintViolation('Unexpected array item.', '', [], '', $pathString, null);
                 $violations->add($violation);
 
                 $keyPath->pop();
                 continue;
             }
 
-            $keyConstraints = $constraints[$keyPath->getPathString()];
-
+            $keyConstraints = $constraints[$pathString];
             $originalViolations = $this->validator->validate($item, $keyConstraints);
-            /** @var ConstraintViolation $violation */
-            foreach ($originalViolations as $violation) {
-                $newViolation = new ConstraintViolation(
-                    $violation->getMessage(),
-                    $violation->getMessageTemplate(),
-                    $violation->getParameters(),
-                    $violation->getRoot(),
-                    $keyPath->getPathString(),
-                    $violation->getInvalidValue(),
-                    $violation->getPlural(),
-                    $violation->getCode(),
-                    $violation->getConstraint(),
-                    $violation->getCause()
-                );
-
-                $violations->add($newViolation);
-            }
+            $violations->addAll($this->getViolationsForKey($originalViolations, $pathString));
 
             $keyPath->pop();
         }
+    }
+
+    /**
+     * @param ConstraintViolationListInterface $violations
+     * @param string $keyPathString
+     *
+     * @return ConstraintViolationListInterface
+     */
+    private function getViolationsForKey($violations, $keyPathString)
+    {
+        $violationsForKey = new ConstraintViolationList();
+
+        /** @var ConstraintViolation $violation */
+        foreach ($violations as $violation) {
+            $newViolation = new ConstraintViolation(
+                $violation->getMessage(),
+                $violation->getMessageTemplate(),
+                $violation->getParameters(),
+                $violation->getRoot(),
+                $keyPathString,
+                $violation->getInvalidValue(),
+                $violation->getPlural(),
+                $violation->getCode(),
+                $violation->getConstraint(),
+                $violation->getCause()
+            );
+
+            $violationsForKey->add($newViolation);
+        }
+
+        return $violationsForKey;
     }
 }
