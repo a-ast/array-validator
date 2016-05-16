@@ -1,51 +1,51 @@
-#test_array_has_no_violoation:
-#    array:
-#        name: 'The Lord of the Rings'
-#        price: 25.99
-#        in_stock: true
-#        isbns:
-#            isbn-10: '9780007117116'
-#        pages: 567
-#
-#    constrains:
-#        name:
-#            - 'NotBlank'
-#            - 'Type(type="string")'
-#        price:
-#            - 'NotBlank'
-#            - 'Type(type="float")'
-#        in_stock:
-#            - 'NotBlank'
-#            - 'Type(type="bool")'
-#        isbns/isbn-10:
-#            - 'Isbn'
-#        pages:
-#            - 'Type(type="integer")'
-#
-#    violations: []
+test_array_has_no_violoation:
+    array:
+        name: 'The Lord of the Rings'
+        price: 25.99
+        in_stock: true
+        isbns:
+            isbn-10: '9780007117116'
+        pages: 567
 
-#test_array_has_violoations_in_depth_1:
-#    array:
-#        name: ''
-#        price: x25.99
-#
-#    constrains:
-#        name:
-#            - 'NotBlank'
-#            - 'Type(type="string")'
-#        price:
-#            - 'NotBlank'
-#            - 'Type(type="float")'
-#
-#    violations:
-#        -
-#            key_path: 'name'
-#            invalid_value: ''
-#            message: 'This value should not be blank.'
-#        -
-#            key_path: 'price'
-#            invalid_value: x25.99
-#            message: 'This value should be of type float.'
+    constrains:
+        name:
+            - 'NotBlank'
+            - 'Type(type="string")'
+        price:
+            - 'NotBlank'
+            - 'Type(type="float")'
+        in_stock:
+            - 'NotBlank'
+            - 'Type(type="bool")'
+        isbns/isbn-10:
+            - 'Isbn'
+        pages:
+            - 'Type(type="integer")'
+
+    violations: []
+
+test_array_has_violoations_in_depth_1:
+    array:
+        name: ''
+        price: x25.99
+
+    constrains:
+        name:
+            - 'NotBlank'
+            - 'Type(type="string")'
+        price:
+            - 'NotBlank'
+            - 'Type(type="float")'
+
+    violations:
+        -
+            key_path: 'name'
+            invalid_value: ''
+            message: 'This value should not be blank.'
+        -
+            key_path: 'price'
+            invalid_value: x25.99
+            message: 'This value should be of type float.'
 
 test_array_has_violoations_in_depth_2:
     array:
