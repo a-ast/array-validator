@@ -22,14 +22,16 @@ class ConstraintReader
         AnnotationRegistry::registerLoader($this->getClassLoaderCallback());
     }
 
-    public function read(array &$definitions)
+    public function read(array &$definitions, $keyPrefix = '')
     {
+        $keyPrefix = !$keyPrefix ? : $keyPrefix.'/';
+
         $constraints = [];
 
         foreach ($definitions as $key => &$keyDefinitions) {
             foreach ($keyDefinitions as $definition) {
                 $annotations = $this->parser->parse('@'.$definition);
-                $constraints[$key][] = $annotations[0];
+                $constraints[$keyPrefix.$key][] = $annotations[0];
             }
         }
 
