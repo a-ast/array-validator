@@ -1,6 +1,6 @@
 <?php
 
-namespace Aa\ArrayValidator\Tests;
+namespace Aa\ArrayValidator;
 
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
@@ -17,8 +17,7 @@ trait YamlFixtureAwareTrait
      */
     protected function getDataFromFixtureFile($fileName, $testDir = '')
     {
-        $testDir = '' === $testDir ? '' : '/'.$testDir;
-        $filePath = __DIR__.sprintf('%s/fixtures/%s.yml', $testDir, $fileName);
+        $filePath = sprintf('%s/%s.yml', $testDir, $fileName);
         $fixtureData = file_get_contents($filePath);
 
         return Yaml::parse($fixtureData);

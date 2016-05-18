@@ -4,6 +4,7 @@ namespace Aa\ArrayValidator\Tests;
 
 use Aa\ArrayValidator\ConstraintReader;
 use Aa\ArrayValidator\Validator;
+use Aa\ArrayValidator\YamlFixtureAwareTrait;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -32,7 +33,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 
     public function dataProvider()
     {
-        return $this->getDataFromFixtureFile('fixtures');
+        return $this->getDataFromFixtureFile('fixtures', __DIR__.'/fixtures');
     }
 
     private function getViolationsAsArray(ConstraintViolationListInterface $violations)
