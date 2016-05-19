@@ -4,6 +4,7 @@ namespace Aa\ArrayValidator;
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\DocParser;
+use Symfony\Component\Validator\Constraints\EqualTo;
 
 class ConstraintReader
 {
@@ -24,15 +25,20 @@ class ConstraintReader
 
     public function read(array &$definitions, $keyPrefix = '')
     {
-        $keyPrefix = !$keyPrefix ? : $keyPrefix.'/';
+        $keyPrefix = $keyPrefix ? $keyPrefix.'/' : '';
 
         $constraints = [];
 
         foreach ($definitions as $key => &$keyDefinitions) {
-            foreach ($keyDefinitions as $definition) {
-                $annotations = $this->parser->parse('@'.$definition);
-                $constraints[$keyPrefix.$key][] = $annotations[0];
+            if(is_array($keyDefinitions)) {
+                foreach ($keyDefinitions as $definition) {
+                    $annotations = $this->parser->parse('@'.$definition);
+                    $constraints[$keyPrefix.$key][] = $annotations[0];
+                }
+                continue;
             }
+
+            $constraints[$keyPrefix.$key] = new EqualTo(['value' => $keyDefinitions]);
         }
 
         return $constraints;

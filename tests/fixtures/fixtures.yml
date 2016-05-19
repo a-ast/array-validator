@@ -88,3 +88,15 @@ test_array_has_violoations_for_unexpected_keys:
             key_path: 'isbns/isbn-10'
             invalid_value: null
             message: 'Unexpected array item.'
+
+test_scalar_constraint_values_are_converted_to_equalst_constraint:
+    array:
+        isbns:
+            isbn-10: '978xxx7117116'
+    constrains:
+        isbns/isbn-10: '9780007117116'
+    violations:
+          -
+              key_path: 'isbns/isbn-10'
+              invalid_value: '978xxx7117116'
+              message: 'This value should be equal to "9780007117116".'
