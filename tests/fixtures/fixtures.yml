@@ -1,4 +1,6 @@
 test_array_has_no_violoation:
+    validation_options:
+        ignore_unexpected_items: false
     array:
         name: 'The Lord of the Rings'
         price: 25.99
@@ -6,7 +8,6 @@ test_array_has_no_violoation:
         isbns:
             isbn-10: '9780007117116'
         pages: 567
-
     constrains:
         name:
             - 'NotBlank'
@@ -21,14 +22,14 @@ test_array_has_no_violoation:
             - 'Isbn'
         pages:
             - 'Type(type="integer")'
-
     violations: []
 
 test_array_has_violoations_in_depth_1:
+    validation_options:
+        ignore_unexpected_items: false
     array:
         name: ''
         price: x25.99
-
     constrains:
         name:
             - 'NotBlank'
@@ -36,7 +37,6 @@ test_array_has_violoations_in_depth_1:
         price:
             - 'NotBlank'
             - 'Type(type="float")'
-
     violations:
         -
             key_path: 'name'
@@ -48,6 +48,8 @@ test_array_has_violoations_in_depth_1:
             message: 'This value should be of type float.'
 
 test_array_has_violoations_in_depth_2:
+    validation_options:
+        ignore_unexpected_items: false
     array:
         name: 'The Lord of the Rings'
         isbns:
@@ -67,6 +69,8 @@ test_array_has_violoations_in_depth_2:
             message: 'This value is neither a valid ISBN-10 nor a valid ISBN-13.'
 
 test_array_has_violoations_for_unexpected_keys:
+    validation_options:
+        ignore_unexpected_items: false
     array:
         name: 'The Lord of the Rings'
         in_stock: true
@@ -89,7 +93,24 @@ test_array_has_violoations_for_unexpected_keys:
             invalid_value: null
             message: 'Unexpected array item.'
 
-test_scalar_constraint_values_are_converted_to_equalst_constraint:
+test_array_has_no_violoations_for_unexpected_keys_if_unexpected_keys_are_ignored:
+    validation_options:
+        ignore_unexpected_items: true
+    array:
+        name: 'The Lord of the Rings'
+        in_stock: true
+        isbns:
+            isbn-10: '9780007117116'
+            isbn-13: '9780007117116'
+    constrains:
+        name:
+            - 'NotBlank'
+            - 'Type(type="string")'
+    violations: []
+
+test_scalar_constraint_values_are_converted_to_equalto_constraint:
+    validation_options:
+        ignore_unexpected_items: false
     array:
         isbns:
             isbn-10: '978xxx7117116'

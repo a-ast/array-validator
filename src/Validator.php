@@ -16,6 +16,11 @@ class Validator
     private $validator;
 
     /**
+     * @var boolean
+     */
+    private $ignoreItemsWithoutConstraints = false;
+
+    /**
      * Constructor.
      *
      * @param ValidatorInterface $validator
@@ -58,12 +63,14 @@ class Validator
                 continue;
             }
 
+            if($this->ignoreItemsWithoutConstraints && !isset($constraints[$pathString])) {
+                $keyPath->pop();
+                continue;
+            }
 
             if(!isset($constraints[$pathString])) {
-
                 $violation = new ConstraintViolation('Unexpected array item.', '', [], '', $pathString, null);
                 $violations->add($violation);
-
                 $keyPath->pop();
                 continue;
             }
@@ -105,5 +112,25 @@ class Validator
         }
 
         return $violationsForKey;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function ignoreItemsWithoutConstraints()
+    {
+        return $this->ignoreItemsWithoutConstraints;
+    }
+
+    /**
+     * @param boolean $value
+     *
+     * @return $this
+     */
+    public function setIgnoreItemsWithoutConstraints($value)
+    {
+        $this->ignoreItemsWithoutConstraints = $value;
+
+        return $this;
     }
 }
