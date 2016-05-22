@@ -40,16 +40,25 @@ class Validator
      */
     public function validate(&$array, $constraints)
     {
-        $keyPath = new KeyPath();
+        $pathString = new KeyPath();
         $violations = new ConstraintViolationList();
+        $matchedPathStrings = [];
 
-        $this->internalValidate($array, $constraints, $keyPath, $violations);
+        $this->internalValidate($array, $constraints, $pathString, $violations, $matchedPathStrings);
+
+        // Find all unmatched constraints
+        foreach ($constraints as $pathString => $constraint) {
+            if(!isset($matchedPathStrings[$pathString])) {
+                $violation = new ConstraintViolation('Missing array item.', '', [], '', $pathString, null);
+                $violations->add($violation);
+            }
+        }
 
         return $violations;
     }
 
-    private function internalValidate(&$array, $constraints, KeyPath $keyPath,
-        ConstraintViolationListInterface $violations)
+    private function internalValidate(array &$array, $constraints, KeyPath $keyPath,
+        ConstraintViolationListInterface $violations, array &$matchedPathStrings)
     {
         foreach ($array as $key => &$item) {
 
@@ -57,7 +66,7 @@ class Validator
             $pathString = $keyPath->getPathString();
 
             if(is_array($item)) {
-                $this->internalValidate($item, $constraints, $keyPath, $violations);
+                $this->internalValidate($item, $constraints, $keyPath, $violations, $matchedPathStrings);
                 
                 $keyPath->pop();
                 continue;
@@ -78,6 +87,8 @@ class Validator
             $keyConstraints = $constraints[$pathString];
             $originalViolations = $this->validator->validate($item, $keyConstraints);
             $violations->addAll($this->getViolationsForKey($originalViolations, $pathString));
+
+            $matchedPathStrings[$pathString] = true;
 
             $keyPath->pop();
         }

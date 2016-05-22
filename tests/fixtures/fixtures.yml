@@ -121,3 +121,17 @@ test_scalar_constraint_values_are_converted_to_equalto_constraint:
               key_path: 'isbns/isbn-10'
               invalid_value: '978xxx7117116'
               message: 'This value should be equal to "9780007117116".'
+
+test_violations_for_unmatched_constraints:
+    validation_options:
+        ignore_unexpected_items: false
+    array:
+        name: 'The Lord of the Rings'
+    constrains:
+        name: 'The Lord of the Rings'
+        price: 88.99
+    violations:
+          -
+              key_path: 'price'
+              invalid_value: null
+              message: 'Missing array item.'
