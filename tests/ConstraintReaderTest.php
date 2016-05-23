@@ -35,7 +35,11 @@ class ConstraintReaderTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Symfony\Component\Validator\Constraints\Url', $constraints['url'][1]);
     }
 
-    public function _testReadFails()
+    /**
+     * @expectedException \Aa\ArrayValidator\Exceptions\ConstraintReaderException
+     * @expectedExceptionMessage Syntax error in the constraint for key 'name' in line 1
+     */
+    public function testReadFailsIfConstraintDefinitionHasSyntaxError()
     {
         $reader = new ConstraintReader();
 
@@ -46,7 +50,6 @@ class ConstraintReaderTest extends PHPUnit_Framework_TestCase
             ]
         ];
 
-        $constraints = $reader->read($data);
-
+        $reader->read($data);
     }
 }

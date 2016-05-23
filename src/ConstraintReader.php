@@ -2,6 +2,8 @@
 
 namespace Aa\ArrayValidator;
 
+use Aa\ArrayValidator\Exceptions\ConstraintReaderException;
+use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\DocParser;
 use Symfony\Component\Validator\Constraints\EqualTo;
@@ -31,8 +33,12 @@ class ConstraintReader
 
         foreach ($definitions as $key => &$keyDefinitions) {
             if(is_array($keyDefinitions)) {
-                foreach ($keyDefinitions as $definition) {
-                    $annotations = $this->parser->parse('@'.$definition);
+                foreach ($keyDefinitions as $index => $definition) {
+                    try {
+                        $annotations = $this->parser->parse('@'.$definition);
+                    } catch(AnnotationException $exception) {
+                        throw new ConstraintReaderException($key, $index, 0, $exception);
+                    }
                     $constraints[$keyPrefix.$key][] = $annotations[0];
                 }
                 continue;
