@@ -46,7 +46,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
         foreach ($violations as $violation) {
             $result[] = [
                 'key_path' => $violation->getPropertyPath(),
-                'invalid_value' => $violation->getInvalidValue(),
+                'invalid_value' => is_array($violation->getInvalidValue()) ? 'Array' : $violation->getInvalidValue(),
                 'message' => $violation->getMessage(),
             ];
         }

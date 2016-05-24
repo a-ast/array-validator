@@ -100,8 +100,8 @@ test_array_has_no_violoations_for_unexpected_keys_if_unexpected_keys_are_ignored
         name: 'The Lord of the Rings'
         in_stock: true
         isbns:
-            isbn-10: '9780007117116'
-            isbn-13: '9780007117116'
+            isbn-10: '0618640150'
+            isbn-13: '9780544445789'
     constrains:
         name:
             - 'NotBlank'
@@ -122,7 +122,7 @@ test_scalar_constraint_values_are_converted_to_equalto_constraint:
               invalid_value: '978xxx7117116'
               message: 'This value should be equal to "9780007117116".'
 
-test_violations_for_unmatched_constraints:
+test_array_has_violations_for_unmatched_constraints:
     validation_options:
         ignore_unexpected_items: false
     array:
@@ -135,3 +135,31 @@ test_violations_for_unmatched_constraints:
               key_path: 'price'
               invalid_value: null
               message: 'Missing array item.'
+
+test_internal_collection_is_validated_without_violations:
+    validation_options:
+        ignore_unexpected_items: true
+    array:
+        isbns:
+            isbn-10: '0618640150'
+            isbn-13: '9780007117116'
+    constrains:
+        isbns:
+          - Count(min="2", max="2")
+    violations: []
+
+test_internal_collection_is_validated_with_violations:
+    validation_options:
+        ignore_unexpected_items: true
+    array:
+        isbns:
+            isbn-10: '0618640150'
+            isbn-13: '9780007117116'
+    constrains:
+        isbns:
+            - Count(min="1", max="1")
+    violations:
+            -
+                key_path: 'isbns'
+                invalid_value: Array
+                message: 'This collection should contain exactly 1 element.'

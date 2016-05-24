@@ -2,6 +2,7 @@
 
 namespace Aa\ArrayValidator;
 
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -66,6 +67,14 @@ class Validator
             $pathString = $keyPath->getPathString();
 
             if(is_array($item)) {
+                // Validate collection
+                if(isset($constraints[$pathString])) {
+                    $pathStringViolations = $this->validateByPathString($item, $pathString, $constraints[$pathString]);
+                    $violations->addAll($pathStringViolations);
+                    $matchedPathStrings[$pathString] = true;
+                }
+
+                // Validate recursively collection items
                 $this->internalValidate($item, $constraints, $keyPath, $violations, $matchedPathStrings);
                 
                 $keyPath->pop();
@@ -84,14 +93,26 @@ class Validator
                 continue;
             }
 
-            $keyConstraints = $constraints[$pathString];
-            $originalViolations = $this->validator->validate($item, $keyConstraints);
-            $violations->addAll($this->getViolationsForKey($originalViolations, $pathString));
-
+            $pathStringViolations = $this->validateByPathString($item, $pathString, $constraints[$pathString]);
+            $violations->addAll($pathStringViolations);
             $matchedPathStrings[$pathString] = true;
 
             $keyPath->pop();
         }
+    }
+
+    /**
+     * @param mixed $value
+     * @param string $pathString
+     * @param Constraint[] $constraints
+     *
+     * @return ConstraintViolationListInterface
+     */
+    protected function validateByPathString($value, $pathString, $constraints)
+    {
+        $violations = $this->validator->validate($value, $constraints);
+
+        return $this->getWrappedViolations($violations, $pathString);
     }
 
     /**
@@ -100,7 +121,7 @@ class Validator
      *
      * @return ConstraintViolationListInterface
      */
-    private function getViolationsForKey($violations, $keyPathString)
+    private function getWrappedViolations($violations, $keyPathString)
     {
         $violationsForKey = new ConstraintViolationList();
 
