@@ -2,7 +2,6 @@
 
 namespace Aa\ArrayValidator;
 
-use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
 trait YamlFixtureAwareTrait
@@ -12,8 +11,6 @@ trait YamlFixtureAwareTrait
      * @param string $testDir
      * 
      * @return array
-     *
-     * @throws ParseException
      */
     protected function getDataFromFixtureFile($fileName, $testDir = '')
     {
