@@ -9,12 +9,17 @@ class KeyPath
      */
     private $items = [];
 
-    public function getPathString()
+    /**
+     * @return string
+     */
+    public function toString()
     {
         return implode('/', $this->items);    
     }
 
     /**
+     * Push new item.
+     *
      * @param string $key
      */
     public function push($key)
@@ -22,6 +27,9 @@ class KeyPath
         array_push($this->items, $key);    
     }
 
+    /**
+     * Pop new item.
+     */
     public function pop()
     {
         array_pop($this->items);

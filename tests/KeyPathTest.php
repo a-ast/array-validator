@@ -11,31 +11,31 @@ class KeyPathTest extends PHPUnit_Framework_TestCase
     {
         $path = new KeyPath();
         
-        $this->assertEquals('', $path->getPathString());
+        $this->assertEquals('', $path->toString());
         
         $path->push('Hobbit');
-        $this->assertEquals('Hobbit', $path->getPathString());
+        $this->assertEquals('Hobbit', $path->toString());
         
         $path->push('Orc');
-        $this->assertEquals('Hobbit/Orc', $path->getPathString());
+        $this->assertEquals('Hobbit/Orc', $path->toString());
 
         $path->push('Man');
-        $this->assertEquals('Hobbit/Orc/Man', $path->getPathString());
+        $this->assertEquals('Hobbit/Orc/Man', $path->toString());
 
         $path->pop();
-        $this->assertEquals('Hobbit/Orc', $path->getPathString());
+        $this->assertEquals('Hobbit/Orc', $path->toString());
 
         $path->push('Dwarf');
         $path->push('Ent');
-        $this->assertEquals('Hobbit/Orc/Dwarf/Ent', $path->getPathString());
+        $this->assertEquals('Hobbit/Orc/Dwarf/Ent', $path->toString());
 
         $path->pop();
         $path->pop();
         $path->pop();
-        $this->assertEquals('Hobbit', $path->getPathString());
+        $this->assertEquals('Hobbit', $path->toString());
 
         $path->pop();
-        $this->assertEquals('', $path->getPathString());
+        $this->assertEquals('', $path->toString());
     }
 
     public function testThatTooManyPopsDoesNotBreak()
@@ -48,6 +48,6 @@ class KeyPathTest extends PHPUnit_Framework_TestCase
         $path->pop();
         $path->pop();
 
-        $this->assertEquals('', $path->getPathString());
+        $this->assertEquals('', $path->toString());
     }
 }

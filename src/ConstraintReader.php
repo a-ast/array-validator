@@ -25,6 +25,12 @@ class ConstraintReader
         AnnotationRegistry::registerLoader($this->getClassLoaderCallback());
     }
 
+    /**
+     * @param array  $definitions
+     * @param string $keyPrefix
+     *
+     * @return array
+     */
     public function read(array &$definitions, $keyPrefix = '')
     {
         $keyPrefix = $keyPrefix ? $keyPrefix.'/' : '';

@@ -32,10 +32,10 @@ class Validator
     }
 
     /**
-     * Validate array
+     * Validate array.
      *
      * @param array $array
-     * @param       $constraints
+     * @param array $constraints
      *
      * @return ConstraintViolationListInterface
      */
@@ -58,13 +58,20 @@ class Validator
         return $violations;
     }
 
+    /**
+     * @param array                            $array
+     * @param array                            $constraints
+     * @param KeyPath                          $keyPath
+     * @param ConstraintViolationListInterface $violations
+     * @param array                            $matchedPathStrings
+     */
     private function internalValidate(array &$array, $constraints, KeyPath $keyPath,
         ConstraintViolationListInterface $violations, array &$matchedPathStrings)
     {
         foreach ($array as $key => &$item) {
 
             $keyPath->push($key);
-            $pathString = $keyPath->getPathString();
+            $pathString = $keyPath->toString();
 
             if(is_array($item)) {
                 // Validate collection
