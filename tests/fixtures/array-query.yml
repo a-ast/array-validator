@@ -1,0 +1,27 @@
+test_query_without_modificators:
+    query: aa
+    paths:
+        aa: true
+        bb: false
+        aa/bb: false
+test_query_with_asterisk:
+    query: aa/*
+    paths:
+        aa/bb: true
+        aa/123: true
+        aa/aa-bb: true
+        bb: false
+        bb/aa: false
+test_query_with_asterisks:
+    query: '*/aa/*'
+    paths:
+        bb/aa/bb: true
+        aa/123: false
+test_query_with_double_slash:
+    query: aa//bb
+    paths:
+        aa/bb: false
+        aa/cc/bb: true
+        aa/abc123/bb: true
+        aa/abc123/cc: false
+
