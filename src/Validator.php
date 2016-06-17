@@ -68,7 +68,7 @@ class Validator
     private function internalValidate(array &$array, $constraints, KeyPath $keyPath,
         ConstraintViolationListInterface $violations, array &$matchedPathStrings)
     {
-        foreach ($array as $key => &$item) {
+         foreach ($array as $key => &$item) {
 
             $keyPath->push($key);
             $pathString = $keyPath->toString();
