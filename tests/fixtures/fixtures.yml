@@ -134,7 +134,7 @@ test_array_has_violations_for_unmatched_constraints:
           -
               key_path: 'price'
               invalid_value: null
-              message: 'Missing array item.'
+              message: 'Unmatched constraint.'
 
 test_internal_collection_is_validated_without_violations:
     validation_options:

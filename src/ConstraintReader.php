@@ -50,7 +50,7 @@ class ConstraintReader
                 continue;
             }
 
-            $constraints[$keyPrefix.$key] = new EqualTo(['value' => $keyDefinitions]);
+            $constraints[$keyPrefix.$key] = [new EqualTo(['value' => $keyDefinitions])];
         }
 
         return $constraints;

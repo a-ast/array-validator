@@ -20,6 +20,10 @@ class Validator
      * @var boolean
      */
     private $ignoreItemsWithoutConstraints = false;
+    /**
+     * @var array
+     */
+    private $matchedConstraintQueries = [];
 
     /**
      * Constructor.
@@ -43,14 +47,13 @@ class Validator
     {
         $pathString = new KeyPath();
         $violations = new ConstraintViolationList();
-        $matchedPathStrings = [];
 
-        $this->internalValidate($array, $constraints, $pathString, $violations, $matchedPathStrings);
+        $this->internalValidate($array, $constraints, $pathString, $violations);
 
         // Find all unmatched constraints
-        foreach ($constraints as $pathString => $constraint) {
-            if(!isset($matchedPathStrings[$pathString])) {
-                $violation = new ConstraintViolation('Missing array item.', '', [], '', $pathString, null);
+        foreach ($constraints as $constraintQuery => $c) {
+            if(!isset($this->matchedConstraintQueries[$constraintQuery])) {
+                $violation = new ConstraintViolation('Unmatched constraint.', '', [], '', $constraintQuery, null);
                 $violations->add($violation);
             }
         }
@@ -63,46 +66,45 @@ class Validator
      * @param array                            $constraints
      * @param KeyPath                          $keyPath
      * @param ConstraintViolationListInterface $violations
-     * @param array                            $matchedPathStrings
      */
     private function internalValidate(array &$array, $constraints, KeyPath $keyPath,
-        ConstraintViolationListInterface $violations, array &$matchedPathStrings)
+        ConstraintViolationListInterface $violations)
     {
          foreach ($array as $key => &$item) {
 
             $keyPath->push($key);
             $pathString = $keyPath->toString();
 
+            $itemConstraints = $this->getConstraintsByPath($constraints, $keyPath);
+
             if(is_array($item)) {
                 // Validate collection
-                if(isset($constraints[$pathString])) {
-                    $pathStringViolations = $this->validateByPathString($item, $pathString, $constraints[$pathString]);
+                if(count($itemConstraints) > 0) {
+                    $pathStringViolations = $this->validateByPathString($item, $pathString, $itemConstraints);
                     $violations->addAll($pathStringViolations);
-                    $matchedPathStrings[$pathString] = true;
                 }
 
                 // Validate recursively collection items
-                $this->internalValidate($item, $constraints, $keyPath, $violations, $matchedPathStrings);
+                $this->internalValidate($item, $constraints, $keyPath, $violations);
                 
                 $keyPath->pop();
                 continue;
             }
 
-            if($this->ignoreItemsWithoutConstraints && !isset($constraints[$pathString])) {
+            if($this->ignoreItemsWithoutConstraints && count($itemConstraints) == 0) {
                 $keyPath->pop();
                 continue;
             }
 
-            if(!isset($constraints[$pathString])) {
+            if(count($itemConstraints) == 0) {
                 $violation = new ConstraintViolation('Unexpected array item.', '', [], '', $pathString, null);
                 $violations->add($violation);
                 $keyPath->pop();
                 continue;
             }
 
-            $pathStringViolations = $this->validateByPathString($item, $pathString, $constraints[$pathString]);
+            $pathStringViolations = $this->validateByPathString($item, $pathString, $itemConstraints);
             $violations->addAll($pathStringViolations);
-            $matchedPathStrings[$pathString] = true;
 
             $keyPath->pop();
         }
@@ -111,14 +113,13 @@ class Validator
     /**
      * @param mixed $value
      * @param string $pathString
-     * @param Constraint[] $constraints
+     * @param array $constraints
      *
      * @return ConstraintViolationListInterface
      */
-    protected function validateByPathString($value, $pathString, $constraints)
+    protected function validateByPathString($value, $pathString, &$constraints)
     {
         $violations = $this->validator->validate($value, $constraints);
-
         return $this->getWrappedViolations($violations, $pathString);
     }
 
@@ -130,7 +131,7 @@ class Validator
      */
     private function getWrappedViolations($violations, $keyPathString)
     {
-        $violationsForKey = new ConstraintViolationList();
+        $wrappedViolations = new ConstraintViolationList();
 
         /** @var ConstraintViolation $violation */
         foreach ($violations as $violation) {
@@ -147,10 +148,10 @@ class Validator
                 $violation->getCause()
             );
 
-            $violationsForKey->add($newViolation);
+            $wrappedViolations->add($newViolation);
         }
 
-        return $violationsForKey;
+        return $wrappedViolations;
     }
 
     /**
@@ -171,5 +172,27 @@ class Validator
         $this->ignoreItemsWithoutConstraints = $value;
 
         return $this;
+    }
+
+    /**
+     * @param array   $constraints
+     * @param KeyPath $keyPath
+     *
+     * @return array
+     */
+    private function getConstraintsByPath(array &$constraints, KeyPath $keyPath)
+    {
+        $filteredConstraints = [];
+
+        foreach ($constraints as $constraintQuery => &$itemConstraints) {
+            $arrayFilterQuery = new ArrayFilterQuery($constraintQuery);
+            if($arrayFilterQuery->matches($keyPath->toString())) {
+                $filteredConstraints = array_merge($filteredConstraints, $itemConstraints);
+
+                $this->matchedConstraintQueries[$constraintQuery] = true;
+            }
+        }
+
+        return $filteredConstraints;
     }
 }
