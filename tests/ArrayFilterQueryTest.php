@@ -12,13 +12,12 @@ class ArrayFilterQueryTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProvider
+     *
+     * @param $query
+     * @param $paths
      */
     public function testMatches($query, $paths)
     {
-//        $query = new ArrayFilterQuery('aa');
-//        $this->assertEquals(true, $query->matches('aa'));
-//        $this->assertEquals(false, $query->matches('bb'));
-
         $query = new ArrayFilterQuery($query);
 
         foreach ($paths as $path => $matches) {
