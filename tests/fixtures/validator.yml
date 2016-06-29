@@ -68,7 +68,7 @@ test_array_has_violoations_in_depth_2:
             invalid_value: '0780007117116'
             message: 'This value is neither a valid ISBN-10 nor a valid ISBN-13.'
 
-test_array_has_violoations_for_unexpected_keys:
+test_array_has_violoations_for_unexpected_items:
     validation_options:
         ignore_unexpected_items: false
     array:
@@ -93,7 +93,7 @@ test_array_has_violoations_for_unexpected_keys:
             invalid_value: null
             message: 'Unexpected item.'
 
-test_array_has_no_violoations_for_unexpected_keys_if_unexpected_keys_are_ignored:
+test_array_has_no_violoations_for_unexpected_items_if_unexpected_items_are_ignored:
     validation_options:
         ignore_unexpected_items: true
     array:
@@ -136,7 +136,7 @@ test_array_has_violations_for_unmatched_constraints:
               invalid_value: null
               message: 'Unused constraint.'
 
-test_internal_collection_is_validated_without_violations:
+test_embedded_collection_is_validated_without_violations:
     validation_options:
         ignore_unexpected_items: true
     array:
@@ -148,7 +148,7 @@ test_internal_collection_is_validated_without_violations:
           - Count(min="2", max="2")
     violations: []
 
-test_internal_collection_is_validated_with_violations:
+test_embedded_collection_is_validated_with_violations:
     validation_options:
         ignore_unexpected_items: true
     array:

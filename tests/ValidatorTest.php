@@ -35,7 +35,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
 
     public function dataProvider()
     {
-        return $this->getDataFromFixtureFile('fixtures', __DIR__.'/fixtures');
+        return $this->getDataFromFixtureFile('validator', __DIR__.'/fixtures');
     }
 
     private function getViolationsAsArray(ConstraintViolationListInterface $violations)
