@@ -11,6 +11,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class Validator
 {
     /**
+     * Symfony validator.
+     *
      * @var ValidatorInterface
      */
     private $validator;
@@ -19,6 +21,7 @@ class Validator
      * @var boolean
      */
     private $ignoreItemsWithoutConstraints = false;
+
     /**
      * @var array
      */
@@ -44,10 +47,10 @@ class Validator
      */
     public function validate(&$array, $constraints)
     {
-        $pathString = new KeyPath();
+        $keyPath = new KeyPath();
         $violations = new ConstraintViolationList();
 
-        $this->internalValidate($array, $constraints, $pathString, $violations);
+        $this->internalValidate($array, $constraints, $keyPath, $violations);
 
         // Find all unmatched constraints
         foreach ($constraints as $constraintQuery => $c) {
@@ -78,8 +81,8 @@ class Validator
             if(is_array($item)) {
                 // Validate collection
                 if(count($itemConstraints) > 0) {
-                    $pathStringViolations = $this->validateItem($item, $keyPath, $itemConstraints);
-                    $violations->addAll($pathStringViolations);
+                    $itemViolations = $this->validateItem($item, $keyPath, $itemConstraints);
+                    $violations->addAll($itemViolations);
                 }
 
                 // Validate recursively collection items
@@ -101,8 +104,8 @@ class Validator
                 continue;
             }
 
-            $pathStringViolations = $this->validateItem($item, $keyPath, $itemConstraints);
-            $violations->addAll($pathStringViolations);
+            $itemViolations = $this->validateItem($item, $keyPath, $itemConstraints);
+            $violations->addAll($itemViolations);
 
             $keyPath->pop();
         }
