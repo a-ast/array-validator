@@ -2,7 +2,6 @@
 
 namespace Aa\ArrayValidator;
 
-use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -73,14 +72,13 @@ class Validator
          foreach ($array as $key => &$item) {
 
             $keyPath->push($key);
-            $pathString = $keyPath->toString();
 
-            $itemConstraints = $this->getConstraintsByPath($constraints, $keyPath);
+            $itemConstraints = $this->getItemConstraints($constraints, $keyPath);
 
             if(is_array($item)) {
                 // Validate collection
                 if(count($itemConstraints) > 0) {
-                    $pathStringViolations = $this->validateByPathString($item, $pathString, $itemConstraints);
+                    $pathStringViolations = $this->validateItem($item, $keyPath, $itemConstraints);
                     $violations->addAll($pathStringViolations);
                 }
 
@@ -97,13 +95,13 @@ class Validator
             }
 
             if(count($itemConstraints) == 0) {
-                $violation = new ConstraintViolation('Unexpected item.', '', [], '', $pathString, null);
+                $violation = new ConstraintViolation('Unexpected item.', '', [], '', $keyPath->toString(), null);
                 $violations->add($violation);
                 $keyPath->pop();
                 continue;
             }
 
-            $pathStringViolations = $this->validateByPathString($item, $pathString, $itemConstraints);
+            $pathStringViolations = $this->validateItem($item, $keyPath, $itemConstraints);
             $violations->addAll($pathStringViolations);
 
             $keyPath->pop();
@@ -111,16 +109,16 @@ class Validator
     }
 
     /**
-     * @param mixed $value
-     * @param string $pathString
-     * @param array $constraints
+     * @param mixed   $value
+     * @param KeyPath $path
+     * @param array   $constraints
      *
      * @return ConstraintViolationListInterface
      */
-    protected function validateByPathString($value, $pathString, &$constraints)
+    protected function validateItem($value, KeyPath $path, &$constraints)
     {
         $violations = $this->validator->validate($value, $constraints);
-        return $this->getWrappedViolations($violations, $pathString);
+        return $this->getWrappedViolations($violations, $path->toString());
     }
 
     /**
@@ -180,7 +178,7 @@ class Validator
      *
      * @return array
      */
-    private function getConstraintsByPath(array &$constraints, KeyPath $keyPath)
+    private function getItemConstraints(array &$constraints, KeyPath $keyPath)
     {
         $filteredConstraints = [];
 
