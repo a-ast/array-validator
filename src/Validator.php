@@ -53,7 +53,7 @@ class Validator
         // Find all unmatched constraints
         foreach ($constraints as $constraintQuery => $c) {
             if(!isset($this->matchedConstraintQueries[$constraintQuery])) {
-                $violation = new ConstraintViolation('Unmatched constraint.', '', [], '', $constraintQuery, null);
+                $violation = new ConstraintViolation('Unused constraint.', '', [], '', $constraintQuery, null);
                 $violations->add($violation);
             }
         }
@@ -97,7 +97,7 @@ class Validator
             }
 
             if(count($itemConstraints) == 0) {
-                $violation = new ConstraintViolation('Unexpected array item.', '', [], '', $pathString, null);
+                $violation = new ConstraintViolation('Unexpected item.', '', [], '', $pathString, null);
                 $violations->add($violation);
                 $keyPath->pop();
                 continue;

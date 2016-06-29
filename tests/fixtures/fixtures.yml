@@ -87,11 +87,11 @@ test_array_has_violoations_for_unexpected_keys:
         -
             key_path: 'in_stock'
             invalid_value: null
-            message: 'Unexpected array item.'
+            message: 'Unexpected item.'
         -
             key_path: 'isbns/isbn-10'
             invalid_value: null
-            message: 'Unexpected array item.'
+            message: 'Unexpected item.'
 
 test_array_has_no_violoations_for_unexpected_keys_if_unexpected_keys_are_ignored:
     validation_options:
@@ -134,7 +134,7 @@ test_array_has_violations_for_unmatched_constraints:
           -
               key_path: 'price'
               invalid_value: null
-              message: 'Unmatched constraint.'
+              message: 'Unused constraint.'
 
 test_internal_collection_is_validated_without_violations:
     validation_options:
