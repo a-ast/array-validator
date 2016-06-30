@@ -163,3 +163,45 @@ test_embedded_collection_is_validated_with_violations:
                 key_path: 'isbns'
                 invalid_value: Array
                 message: 'This collection should contain exactly 1 element.'
+
+test_constraints_with_array_queries:
+    validation_options:
+        ignore_unexpected_items: false
+    array:
+        books:
+            the_lord_of_the_rings:
+                name: 'The Lord of the Rings'
+                price: 25.99
+                chapters:
+                    chapter1: 'A Long-expected Party'
+                    chapter2: 'The Shadow of the Past'
+                    chapter3: 'Three is Company'
+                    chapter4: 'A Short Cut to Mushrooms'
+                pages: 567
+                in_stock: true
+            the_hobbit:
+                name: 'The Lord of the Rings'
+                price: 26.99
+                chapters:
+                    chapter1: 'An Unexpected Party'
+                    chapter2: 'Roast Mutton'
+                    chapter3: 'A Short Rest'
+                pages: 1234
+                in_stock: false
+    constrains:
+        books//name:
+            - 'NotBlank'
+            - 'Type(type="string")'
+        //price:
+            - 'NotBlank'
+            - 'Type(type="float")'
+        books//chapters/*:
+            - 'NotBlank'
+            - 'Type(type="string")'
+        books/*/pages:
+            - 'Type(type="integer")'
+        '*/*/in_stock':
+            - 'Type(type="boolean")'
+        books/*/chapters:
+          - Count(min="3")
+    violations: []

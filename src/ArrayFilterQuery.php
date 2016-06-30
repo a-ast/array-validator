@@ -35,7 +35,7 @@ class ArrayFilterQuery
     private function buildPattern($query)
     {
         $pattern = str_replace('*', self::REGEX_IDENTIFIER, $query);
-        $pattern = str_replace('//', '/'.self::REGEX_IDENTIFIER_PATH.'/', $pattern);
+        $pattern = str_replace('//', self::REGEX_IDENTIFIER_PATH.'/', $pattern);
 
         $this->pattern = '#^'.$pattern.'$#';
     }

@@ -24,4 +24,13 @@ test_query_with_double_slash:
         aa/cc/bb: true
         aa/abc123/bb: true
         aa/abc123/cc: false
+test_query_with_double_slash_at_the_beginning_of_query:
+    query: //bb
+    paths:
+        aa/bb: true
+        aa/cc/bb: true
+        aa/abc123/bb: true
+        cc: false
+        aa/abc123/cc: false
+
 
