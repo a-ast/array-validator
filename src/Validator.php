@@ -2,8 +2,8 @@
 
 namespace Aa\ArrayValidator;
 
+use Aa\ArrayValidator\ConstraintViolationList;
 use Symfony\Component\Validator\ConstraintViolation;
-use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -121,38 +121,7 @@ class Validator
     protected function validateItem($value, KeyPath $path, &$constraints)
     {
         $violations = $this->validator->validate($value, $constraints);
-        return $this->getWrappedViolations($violations, $path->toString());
-    }
-
-    /**
-     * @param ConstraintViolationListInterface $violations
-     * @param string $keyPathString
-     *
-     * @return ConstraintViolationListInterface
-     */
-    private function getWrappedViolations($violations, $keyPathString)
-    {
-        $wrappedViolations = new ConstraintViolationList();
-
-        /** @var ConstraintViolation $violation */
-        foreach ($violations as $violation) {
-            $newViolation = new ConstraintViolation(
-                $violation->getMessage(),
-                $violation->getMessageTemplate(),
-                $violation->getParameters(),
-                $violation->getRoot(),
-                $keyPathString,
-                $violation->getInvalidValue(),
-                $violation->getPlural(),
-                $violation->getCode(),
-                $violation->getConstraint(),
-                $violation->getCause()
-            );
-
-            $wrappedViolations->add($newViolation);
-        }
-
-        return $wrappedViolations;
+        return new ConstraintViolationList($violations, $path->toString());
     }
 
     /**
