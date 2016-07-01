@@ -4,8 +4,8 @@ namespace Aa\ArrayValidator;
 
 class ArrayFilterQuery
 {
-    const REGEX_IDENTIFIER = '[_\-a-zA-Z0-9]+';
-    const REGEX_IDENTIFIER_PATH = '[_/\-a-zA-Z0-9]+';
+    const REGEX_IDENTIFIER = '[_\-a-zA-Z0-9\.]+';
+    const REGEX_IDENTIFIER_PATH = '[_/\-a-zA-Z0-9\.]+';
     /**
      * @var string
      */
