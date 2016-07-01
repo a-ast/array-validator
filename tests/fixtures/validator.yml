@@ -145,7 +145,7 @@ test_embedded_collection_is_validated_without_violations:
             isbn-13: '9780007117116'
     constrains:
         isbns:
-          - Count(min="2", max="2")
+            - Count(min="2", max="2")
     violations: []
 
 test_embedded_collection_is_validated_with_violations:
