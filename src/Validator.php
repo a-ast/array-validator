@@ -50,7 +50,7 @@ class Validator
         $keyPath = new KeyPath();
         $violations = new ConstraintViolationList();
 
-        $this->internalValidate($array, $constraints, $keyPath, $violations);
+        $this->internalValidate($array, $constraints, $keyPath, $violations, false);
 
         // Find all unmatched constraints
         foreach ($constraints as $constraintQuery => $c) {
@@ -70,7 +70,7 @@ class Validator
      * @param ConstraintViolationListInterface $violations
      */
     private function internalValidate(array &$array, $constraints, KeyPath $keyPath,
-        ConstraintViolationListInterface $violations)
+        ConstraintViolationListInterface $violations, $ignoreMissingConstraintForCollections)
     {
          foreach ($array as $key => &$item) {
 
@@ -86,7 +86,7 @@ class Validator
                 }
 
                 // Validate recursively collection items
-                $this->internalValidate($item, $constraints, $keyPath, $violations);
+                $this->internalValidate($item, $constraints, $keyPath, $violations, count($itemConstraints) > 0);
                 
                 $keyPath->pop();
                 continue;
@@ -98,8 +98,10 @@ class Validator
             }
 
             if(count($itemConstraints) == 0) {
-                $violation = new ConstraintViolation('Unexpected item.', '', [], '', $keyPath->toString(), null);
-                $violations->add($violation);
+                if(!$ignoreMissingConstraintForCollections) {
+                    $violation = new ConstraintViolation('Unexpected item.', '', [], '', $keyPath->toString(), null);
+                    $violations->add($violation);
+                }
                 $keyPath->pop();
                 continue;
             }
